@@ -19,16 +19,29 @@
 }
 
 :root {
-  --background: #181615;
-  --foreground: #EBE5D9;
+  --background: #1A1918;
+  --foreground: #E8E3D9;
   --gold: #D4AF37;
   --card-bg: #211f1d;
-  --card-border: #2a2725;
+  --card-border: #2a2825;
   --muted: #8a8279;
   --category-ai: #7B9BAF;
   --category-crypto: #C9A84C;
   --category-finance: #6B9E7A;
   --category-vc: #B07BAF;
+}
+
+.light {
+  --background: #F9F6F0;
+  --foreground: #2A2825;
+  --gold: #B8941E;
+  --card-bg: #EBE5D9;
+  --card-border: #D8D0C4;
+  --muted: #7a7268;
+  --category-ai: #4A7A92;
+  --category-crypto: #9E8230;
+  --category-finance: #4A7E5A;
+  --category-vc: #8A5A89;
 }
 
 @theme inline {

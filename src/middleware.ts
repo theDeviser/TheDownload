@@ -38,7 +38,11 @@ export async function middleware(request: NextRequest) {
 
   // Public routes that don't require auth
   const isPublicRoute =
-    pathname.startsWith("/auth") || pathname.startsWith("/api");
+    pathname === "/" ||
+    pathname.startsWith("/auth") ||
+    pathname.startsWith("/api") ||
+    pathname.startsWith("/share") ||
+    pathname.startsWith("/demo");
 
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone();
@@ -66,6 +70,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|json)$).*)",
   ],
 };

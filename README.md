@@ -1,39 +1,75 @@
 # The Download
 
-**Everything your spouse was doom-scrolling today, explained like you're a normal person.**
+> Everything your spouse was doom-scrolling today, explained like you're a normal person.
 
-A daily curated digest that aggregates complex tech, finance, and crypto news — targeting the niches a user's partner is obsessed with — and translates it into witty, jargon-free, human-readable summaries.
+A dual-persona SaaS platform that transforms the daily doom-scroll into a curated, jargon-free digest. Built with Next.js, Supabase, and OpenAI.
 
 ## Tech Stack
 
-- **Framework**: Next.js 16 (App Router) + TypeScript
-- **Styling**: Tailwind CSS v4 with custom editorial dark theme
-- **Database & Auth**: Supabase (PostgreSQL + Auth + RLS)
-- **AI**: OpenAI `gpt-4o-mini` for summary generation
-- **Animations**: Motion (Framer Motion)
-- **Deployment**: Vercel (with Cron Jobs for daily generation)
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 16 (App Router, TypeScript) |
+| Styling | Tailwind CSS v4 + Shadcn UI |
+| Database | Supabase (PostgreSQL + pgvector) |
+| Auth | Supabase Auth (Email + Google OAuth) |
+| AI | OpenAI API (gpt-4o-mini) |
+| Testing | Playwright |
+| Deployment | Vercel |
 
 ## Getting Started
 
-### 1. Clone & Install
+### Prerequisites
+
+- Node.js 18+
+- A Supabase project (free tier works)
+- An OpenAI API key
+
+### Setup
+
+1. **Clone the repository:**
 
 ```bash
+git clone <repo-url>
 cd the-download
+```
+
+2. **Install dependencies:**
+
+```bash
 npm install
 ```
 
-### 2. Set Up Supabase
+3. **Configure environment variables:**
 
-1. Create a new Supabase project at [supabase.com](https://supabase.com)
-2. Run the migration in `supabase/migrations/001_initial_schema.sql` via the Supabase SQL Editor
-3. Copy `.env.local.example` to `.env.local` and fill in your credentials
+Copy the example file and fill in your credentials:
 
-### 3. Set Up OpenAI
+```bash
+cp .env.local.example .env.local
+```
 
-1. Get an API key from [platform.openai.com](https://platform.openai.com)
-2. Add it to `.env.local` as `OPENAI_API_KEY`
+Required variables:
 
-### 4. Run Development Server
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+OPENAI_API_KEY=sk-your-openai-key
+CRON_SECRET=your-random-secret
+```
+
+4. **Run database migrations:**
+
+Apply migrations in order via the Supabase dashboard (SQL Editor) or CLI:
+
+```bash
+# MVP schema
+supabase db push --file supabase/migrations/001_initial_schema.sql
+
+# SaaS platform schema (includes pgvector)
+supabase db push --file supabase/migrations/002_saas_schema.sql
+```
+
+5. **Start the dev server:**
 
 ```bash
 npm run dev
@@ -41,52 +77,141 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-**Note:** The app works with mock data out of the box — no Supabase/OpenAI configuration required to see the UI.
-
 ## Project Structure
 
+### Route Groups
+
+The app uses Next.js Route Groups to cleanly separate the two personas:
+
 ```
-src/
-├── app/
-│   ├── api/cron/generate-daily/  # Daily digest generation endpoint
-│   ├── auth/login/               # Login page
-│   ├── auth/signup/              # Signup page
-│   ├── onboarding/               # Multi-step onboarding flow
-│   ├── globals.css               # Theme + custom styles
-│   ├── layout.tsx                # Root layout with PWA meta
-│   └── page.tsx                  # Main daily feed view
-├── components/
-│   ├── date-navigator.tsx        # Day-by-day navigation
-│   ├── empty-state.tsx           # No digest available state
-│   ├── header.tsx                # App header with tagline
-│   ├── intro-card.tsx            # Daily greeting card
-│   └── story-card.tsx            # Individual story display
-├── lib/
-│   ├── ai/generate-summary.ts   # OpenAI integration + prompts
-│   ├── api/auth.ts               # Client-side auth helpers
-│   ├── api/digest.ts             # Client-side data fetching
-│   ├── rss/fetcher.ts            # RSS feed fetching + filtering
-│   ├── supabase/client.ts        # Browser Supabase client
-│   ├── supabase/server.ts        # Server Supabase client
-│   ├── supabase/types.ts         # TypeScript types for all tables
-│   └── mock-data.ts              # Mock data for development
-├── middleware.ts                  # Auth + onboarding redirect logic
-supabase/
-└── migrations/001_initial_schema.sql  # Full DB schema with RLS
+src/app/
+├── page.tsx                    # Public marketing landing page
+├── layout.tsx                  # Root layout (Navbar + ThemeProvider)
+│
+├── (admin)/                    # Curator/Admin area (requires auth)
+│   ├── layout.tsx              # Collapsible sidebar navigation
+│   ├── dashboard/page.tsx      # Command Center — ingestion feed
+│   ├── dashboard/logs/page.tsx # System event logs
+│   └── brain/page.tsx          # Knowledge Base — RAG + Obsidian export
+│
+├── (subscriber)/               # Reader/Subscriber area
+│   ├── demo/page.tsx           # Original MVP daily feed viewer
+│   └── share/[slug]/page.tsx   # Public share page (no auth needed)
+│
+├── auth/                       # Authentication pages
+│   ├── login/page.tsx
+│   ├── signup/page.tsx
+│   └── callback/route.ts      # OAuth PKCE code exchange
+│
+├── onboarding/page.tsx         # Partner profiling (topics + tone)
+│
+└── api/
+    ├── cron/generate-daily/    # Vercel Cron endpoint for daily digest
+    └── ingest/webhook/         # Content ingestion webhook
 ```
 
-## Daily Cron Job
+### Key Directories
 
-The digest generation runs daily at 7 AM UTC via Vercel Cron. It:
+- `src/components/` — Reusable components (Navbar, ThemeToggle)
+- `src/components/ui/` — Shadcn UI primitives (Button, Avatar, DropdownMenu)
+- `src/lib/api/` — Client-side API helpers (auth, digest fetching)
+- `src/lib/supabase/` — Supabase client initialization (browser + server)
+- `src/lib/obsidian/` — Obsidian markdown export utilities
+- `src/lib/ai/` — OpenAI integration for summarization
+- `src/lib/rss/` — RSS feed fetching and parsing
+- `supabase/migrations/` — SQL migration files
 
-1. Fetches articles from configured RSS feeds
-2. Filters by each user's topic preferences
-3. Generates spouse-friendly summaries via GPT-4o-mini
-4. Stores everything in Supabase for instant retrieval
+## Database Schema
 
-To trigger manually:
+### pgvector for Embeddings
+
+The SaaS schema uses the `pgvector` extension to store 1536-dimensional embeddings on the `raw_ingestions` table. This powers the Knowledge Base RAG feature, enabling semantic search over saved content.
+
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
+
+CREATE TABLE raw_ingestions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  workspace_id UUID REFERENCES workspaces(id),
+  raw_text TEXT NOT NULL,
+  embedding VECTOR(1536),
+  is_curated_for_digest BOOLEAN DEFAULT FALSE,
+  -- ...
+);
+
+CREATE INDEX ON raw_ingestions
+  USING ivfflat (embedding vector_cosine_ops)
+  WITH (lists = 100);
+```
+
+### Multi-Tenant Architecture
+
+Each admin has a **workspace** with a unique `share_slug`. Content flows:
+
+1. Raw content enters via webhook/RSS → `raw_ingestions`
+2. Admin curates items (`is_curated_for_digest = true`)
+3. AI translates curated items → `translated_items`
+4. Published as a `saas_digests` entry
+5. Subscriber views at `/share/{slug}`
+
+## Running Tests
+
+### Install Playwright Browsers
 
 ```bash
-curl -X POST http://localhost:3000/api/cron/generate-daily \
-  -H "Authorization: Bearer YOUR_CRON_SECRET"
+npx playwright install
 ```
+
+### Run E2E Tests
+
+```bash
+npx playwright test
+```
+
+### View Test Report
+
+```bash
+npx playwright show-report
+```
+
+### Test Files
+
+- `tests/landing-page.spec.ts` — Verifies navbar, hero, CTA buttons, How It Works section
+- `tests/auth-flow.spec.ts` — Verifies login/signup forms, auth redirects
+
+## Theming
+
+The app supports light and dark modes via `next-themes`. The editorial design system uses:
+
+- **Dark Mode (default):** Warm charcoal background (#1A1918), cream text (#E8E3D9), gold accent (#D4AF37)
+- **Light Mode:** Parchment background (#F9F6F0), espresso text (#2A2825), muted gold (#B8941E)
+
+Toggle between modes using the sun/moon button in the navbar or admin sidebar.
+
+## Deployment
+
+### Vercel
+
+1. Push to GitHub
+2. Import the repo in Vercel
+3. Set environment variables in the Vercel dashboard
+4. Deploy
+
+### Cron Job
+
+Configure in `vercel.json`:
+
+```json
+{
+  "crons": [
+    {
+      "path": "/api/cron/generate-daily",
+      "schedule": "0 13 * * *"
+    }
+  ]
+}
+```
+
+## License
+
+Private — All rights reserved.

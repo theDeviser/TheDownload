@@ -1,0 +1,29 @@
+# The Download — Cursor Rules
+
+## Language & Framework
+- Always use TypeScript strict mode.
+- This is a Next.js (App Router) project. Use the `app/` directory conventions.
+- Use `"use client"` only when a component requires client-side interactivity (hooks, event handlers, browser APIs). Server Components are the default.
+
+## UI & Styling
+- Prefer Shadcn UI components (under `src/components/ui/`) for complex interactive elements (dropdowns, dialogs, tooltips).
+- Use Tailwind CSS utility classes for all styling. Do not use CSS modules or styled-components.
+- Follow the editorial design system: Playfair Display for serif headings, Inter for sans body, gold (`var(--gold)`) as accent.
+- All custom CSS variables live in `src/app/globals.css`. Reference them via Tailwind theme tokens (e.g., `bg-background`, `text-gold`, `border-card-border`).
+
+## Architecture
+- Route Groups: `(admin)` for dashboard/curator routes, `(subscriber)` for public/reader routes.
+- Keep utility functions in `src/lib/` (e.g., `src/lib/obsidian/`, `src/lib/api/`, `src/lib/supabase/`).
+- Reusable components go in `src/components/`. Page-specific components stay in the route file.
+- Follow existing patterns when adding new modules.
+
+## Database
+- Supabase is the database and auth provider. Client helpers are in `src/lib/supabase/`.
+- The schema supports pgvector for embeddings. See `supabase/migrations/` for table definitions.
+- Always use Row Level Security (RLS) when creating new tables.
+
+## Code Quality
+- No `any` types. Use explicit types or interfaces.
+- Prefer named exports over default exports for components and utilities.
+- Use `parseInt(value, 10)` — always provide the radix.
+- Handle errors with user-facing feedback, not just `console.log`.
