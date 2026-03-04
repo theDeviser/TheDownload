@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Playfair Display";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKd3vXDXbtM.woff2")
+    format("woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/s/inter/v18/UcCo3FwrK3iLTcviYwY.woff2")
+    format("woff2");
+}
+
+:root {
+  --background: #181615;
+  --foreground: #EBE5D9;
+  --gold: #D4AF37;
+  --card-bg: #211f1d;
+  --card-border: #2a2725;
+  --muted: #8a8279;
+  --category-ai: #7B9BAF;
+  --category-crypto: #C9A84C;
+  --category-finance: #6B9E7A;
+  --category-vc: #B07BAF;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-gold: var(--gold);
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+  --color-muted: var(--muted);
+  --color-cat-ai: var(--category-ai);
+  --color-cat-crypto: var(--category-crypto);
+  --color-cat-finance: var(--category-finance);
+  --color-cat-vc: var(--category-vc);
+  --font-serif: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: rgba(212, 175, 55, 0.3);
+  color: var(--foreground);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--card-border) transparent;
+}
+
+/* Tone slider */
+.tone-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: var(--card-border);
+  border-radius: 9999px;
+  outline: none;
+}
+
+.tone-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--gold);
+  cursor: pointer;
+  border: 3px solid var(--background);
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.3);
+  transition: box-shadow 0.2s;
+}
+
+.tone-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.2);
+}
+
+.tone-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--gold);
+  cursor: pointer;
+  border: 3px solid var(--background);
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.3);
+}

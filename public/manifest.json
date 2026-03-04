@@ -1,0 +1,17 @@
+{
+  "name": "The Download",
+  "short_name": "The Download",
+  "description": "Everything your spouse was doom-scrolling today, explained like you're a normal person.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#181615",
+  "theme_color": "#181615",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
