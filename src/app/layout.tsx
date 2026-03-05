@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import { ThemeProvider } from "next-themes";
+import { Navbar } from "@/components/navbar";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -17,8 +19,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#181615",
-  colorScheme: "dark",
+  themeColor: "#1A1918",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -31,13 +32,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
         <link rel="apple-touch-icon" href="/icons/icon.svg" />
       </head>
       <body className="min-h-screen bg-background pt-[env(safe-area-inset-top)] pr-[env(safe-area-inset-right)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] text-foreground antialiased">
-        {children}
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          <Navbar />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
